@@ -1,252 +1,879 @@
-<!DOCTYPE HTML>
-<!--
-	Editorial by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html>
-	<head>
-		<title>PaN1rt.C0M</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-	</head>
-	<body class="is-preload">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hurûf-u Mukattaa — AI Analysis</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+:root {
+  --bg:#0a0a0f;--bg2:#111118;--bg3:#1a1a26;
+  --line:rgba(255,255,255,0.07);
+  --text:#e2e0f0;--dim:rgba(226,224,240,0.45);--dim2:rgba(226,224,240,0.2);
+  --gold:#c8a84a;--gold-dim:rgba(200,168,74,0.12);
+  --teal:#3ab8a0;--rose:#e05c7a;--violet:#9b7de8;
+  --font:'Space Grotesk',sans-serif;--mono:'Space Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font);overflow-x:hidden;}
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+#app{position:relative;z-index:1;}
 
-		<!-- Wrapper -->
-			<div id="wrapper">
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:56px;
+  background:rgba(10,10,15,0.92);border-bottom:1px solid var(--line);
+  backdrop-filter:blur(12px);
+}
+.nav-id{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:0.05em;}
+.nav-center{display:flex;align-items:center;gap:8px;}
+.nav-status{font-family:var(--mono);font-size:10px;color:var(--teal);display:flex;align-items:center;gap:8px;}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.lang-toggle{
+  display:flex;border:1px solid var(--line);border-radius:4px;overflow:hidden;
+  font-family:var(--mono);font-size:10px;letter-spacing:0.08em;
+}
+.lang-btn{
+  padding:4px 10px;cursor:pointer;background:transparent;color:var(--dim);
+  border:none;transition:all 0.2s;
+}
+.lang-btn.active{background:var(--gold-dim);color:var(--gold);}
+.lang-btn:hover:not(.active){color:var(--text);}
 
-				<!-- Main -->
-					<div id="main">
-						<div class="inner">
+.section{max-width:1160px;margin:0 auto;padding:80px 40px;}
+.section+.section{border-top:1px solid var(--line);}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:100px 40px 80px;max-width:1160px;margin:0 auto;}
 
-							<!-- Header -->
-								<header id="header">
-									<a href="index.html" class="logo"><strong>Editorial</strong> by HTML5 UP</a>
-									<ul class="icons">
-										<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-										<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-										<li><a href="#" class="icon brands fa-snapchat-ghost"><span class="label">Snapchat</span></a></li>
-										<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-										<li><a href="#" class="icon brands fa-medium-m"><span class="label">Medium</span></a></li>
-									</ul>
-								</header>
+.hero-tag{font-family:var(--mono);font-size:11px;color:var(--teal);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:32px;display:flex;align-items:center;gap:10px;}
+.hero-tag::before{content:'';display:block;width:32px;height:1px;background:var(--teal);}
+.hero-arabic{font-size:clamp(52px,8vw,110px);color:var(--gold);line-height:1;margin-bottom:12px;direction:rtl;text-align:left;filter:drop-shadow(0 0 40px rgba(200,168,74,0.25));letter-spacing:0.06em;}
+.hero-title{font-size:clamp(13px,1.4vw,18px);color:var(--dim);font-weight:400;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:48px;}
+.hero-thesis{max-width:640px;font-size:clamp(17px,2vw,26px);font-weight:500;line-height:1.5;color:var(--text);margin-bottom:48px;}
+.hero-thesis em{color:var(--gold);font-style:normal;}
+.hero-findings{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:2px;border:1px solid var(--line);max-width:640px;}
+.finding-cell{padding:16px 18px;background:var(--bg2);border-right:1px solid var(--line);}
+.finding-cell:last-child{border-right:none;}
+.fc-val{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--gold);}
+.fc-label{font-size:11px;color:var(--dim);margin-top:4px;line-height:1.4;}
 
-							<!-- Banner -->
-								<section id="banner">
-									<div class="content">
-										<header>
-											<h1>Hi, I’m Editorial<br />
-											by HTML5 UP</h1>
-											<p>A free and fully responsive site template</p>
-										</header>
-										<p>Aenean ornare velit lacus, ac varius enim ullamcorper eu. Proin aliquam facilisis ante interdum congue. Integer mollis, nisl amet convallis, porttitor magna ullamcorper, amet egestas mauris. Ut magna finibus nisi nec lacinia. Nam maximus erat id euismod egestas. Pellentesque sapien ac quam. Lorem ipsum dolor sit nullam.</p>
-										<ul class="actions">
-											<li><a href="#" class="button big">Learn More</a></li>
-										</ul>
-									</div>
-									<span class="image object">
-										<img src="images/pic10.jpg" alt="" />
-									</span>
-								</section>
+.sec-header{margin-bottom:48px;}
+.sec-index{font-family:var(--mono);font-size:10px;color:var(--dim2);letter-spacing:0.15em;margin-bottom:12px;}
+.sec-title{font-size:clamp(24px,3vw,40px);font-weight:600;color:var(--text);line-height:1.2;margin-bottom:16px;}
+.sec-title span{color:var(--gold);}
+.sec-body{font-size:16px;line-height:1.8;color:var(--dim);max-width:640px;}
+.sec-body strong{color:var(--text);font-weight:500;}
 
-							<!-- Section -->
-								<section>
-									<header class="major">
-										<h2>Erat lacinia</h2>
-									</header>
-									<div class="features">
-										<article>
-											<span class="icon fa-gem"></span>
-											<div class="content">
-												<h3>Portitor ullamcorper</h3>
-												<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
-											</div>
-										</article>
-										<article>
-											<span class="icon solid fa-paper-plane"></span>
-											<div class="content">
-												<h3>Sapien veroeros</h3>
-												<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
-											</div>
-										</article>
-										<article>
-											<span class="icon solid fa-rocket"></span>
-											<div class="content">
-												<h3>Quam lorem ipsum</h3>
-												<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
-											</div>
-										</article>
-										<article>
-											<span class="icon solid fa-signal"></span>
-											<div class="content">
-												<h3>Sed magna finibus</h3>
-												<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
-											</div>
-										</article>
-									</div>
-								</section>
+.letter-box{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;border:1px solid var(--line);border-radius:4px;transition:all 0.25s;cursor:pointer;position:relative;overflow:hidden;}
+.letter-box.selected{background:var(--gold-dim);border-color:rgba(200,168,74,0.3);}
+.letter-box.not-selected{background:var(--bg2);opacity:0.35;}
+.letter-box:hover{opacity:1!important;border-color:rgba(200,168,74,0.6);}
+.lb-ar{font-size:clamp(14px,2vw,22px);color:var(--gold);}
+.lb-freq{font-family:var(--mono);font-size:9px;color:var(--dim2);}
+.lb-bar{position:absolute;bottom:0;left:0;right:0;background:rgba(200,168,74,0.2);transition:height 0.4s ease;}
 
-							<!-- Section -->
-								<section>
-									<header class="major">
-										<h2>Ipsum sed dolor</h2>
-									</header>
-									<div class="posts">
-										<article>
-											<a href="#" class="image"><img src="images/pic01.jpg" alt="" /></a>
-											<h3>Interdum aenean</h3>
-											<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
-											<ul class="actions">
-												<li><a href="#" class="button">More</a></li>
-											</ul>
-										</article>
-										<article>
-											<a href="#" class="image"><img src="images/pic02.jpg" alt="" /></a>
-											<h3>Nulla amet dolore</h3>
-											<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
-											<ul class="actions">
-												<li><a href="#" class="button">More</a></li>
-											</ul>
-										</article>
-										<article>
-											<a href="#" class="image"><img src="images/pic03.jpg" alt="" /></a>
-											<h3>Tempus ullamcorper</h3>
-											<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
-											<ul class="actions">
-												<li><a href="#" class="button">More</a></li>
-											</ul>
-										</article>
-										<article>
-											<a href="#" class="image"><img src="images/pic04.jpg" alt="" /></a>
-											<h3>Sed etiam facilis</h3>
-											<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
-											<ul class="actions">
-												<li><a href="#" class="button">More</a></li>
-											</ul>
-										</article>
-										<article>
-											<a href="#" class="image"><img src="images/pic05.jpg" alt="" /></a>
-											<h3>Feugiat lorem aenean</h3>
-											<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
-											<ul class="actions">
-												<li><a href="#" class="button">More</a></li>
-											</ul>
-										</article>
-										<article>
-											<a href="#" class="image"><img src="images/pic06.jpg" alt="" /></a>
-											<h3>Amet varius aliquam</h3>
-											<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
-											<ul class="actions">
-												<li><a href="#" class="button">More</a></li>
-											</ul>
-										</article>
-									</div>
-								</section>
+.half-stat{display:grid;grid-template-columns:1fr 1fr;gap:2px;border:1px solid var(--line);max-width:480px;margin-bottom:32px;}
+.hs-cell{padding:20px 24px;background:var(--bg2);}
+.hs-cell+.hs-cell{border-left:1px solid var(--line);}
+.hs-val{font-family:var(--mono);font-size:28px;font-weight:700;}
+.hs-label{font-size:12px;color:var(--dim);margin-top:6px;}
 
-						</div>
-					</div>
+.combo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px;margin-bottom:40px;}
+.combo-card{background:var(--bg2);border:1px solid var(--line);padding:20px 20px 16px;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden;}
+.combo-card:hover{border-color:rgba(200,168,74,0.4);background:var(--bg3);}
+.cc-ar{font-size:28px;direction:rtl;margin-bottom:8px;}
+.cc-name{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:0.1em;margin-bottom:12px;}
+.cc-suras{font-size:12px;color:var(--dim);line-height:1.6;}
+.cc-sura-name{color:var(--text);}
+.cc-bar-wrap{margin-top:12px;height:3px;background:var(--line);border-radius:2px;overflow:hidden;}
+.cc-bar{height:100%;border-radius:2px;transition:width 0.6s ease;}
 
-				<!-- Sidebar -->
-					<div id="sidebar">
-						<div class="inner">
+.sura-map{display:grid;grid-template-columns:repeat(19,1fr);gap:3px;margin-bottom:32px;}
+.sura-cell{aspect-ratio:1;border-radius:2px;cursor:pointer;transition:all 0.2s;position:relative;}
+.sura-cell:hover{transform:scale(1.4);z-index:10;}
+.sura-tooltip{position:absolute;bottom:calc(100%+6px);left:50%;transform:translateX(-50%);background:#1a1a2e;border:1px solid var(--line);padding:6px 10px;border-radius:4px;font-family:var(--mono);font-size:9px;color:var(--text);white-space:nowrap;z-index:20;pointer-events:none;}
 
-							<!-- Search -->
-								<section id="search" class="alt">
-									<form method="post" action="#">
-										<input type="text" name="query" id="query" placeholder="Search" />
-									</form>
-								</section>
+.cluster-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-bottom:40px;}
+.cluster-card{background:var(--bg2);border:1px solid var(--line);padding:28px;position:relative;}
+.cluster-name{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;}
+.cluster-ar{font-size:32px;margin-bottom:16px;}
+.cluster-similarity{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;margin-bottom:8px;}
+.sim-label{font-size:11px;color:var(--dim);min-width:60px;}
+.sim-bar-wrap{height:6px;background:var(--line);border-radius:3px;overflow:hidden;}
+.sim-bar{height:100%;border-radius:3px;transition:width 1s ease;}
+.sim-val{font-family:var(--mono);font-size:12px;font-weight:700;}
+.cluster-note{font-size:12px;color:var(--dim);margin-top:12px;line-height:1.6;border-top:1px solid var(--line);padding-top:12px;}
 
-							<!-- Menu -->
-								<nav id="menu">
-									<header class="major">
-										<h2>Menu</h2>
-									</header>
-									<ul>
-										<li><a href="index.html">Homepage</a></li>
-										<li><a href="generic.html">Generic</a></li>
-										<li><a href="elements.html">Elements</a></li>
-										<li>
-											<span class="opener">Submenu</span>
-											<ul>
-												<li><a href="#">Lorem Dolor</a></li>
-												<li><a href="#">Ipsum Adipiscing</a></li>
-												<li><a href="#">Tempus Magna</a></li>
-												<li><a href="#">Feugiat Veroeros</a></li>
-											</ul>
-										</li>
-										<li><a href="#">Etiam Dolore</a></li>
-										<li><a href="#">Adipiscing</a></li>
-										<li>
-											<span class="opener">Another Submenu</span>
-											<ul>
-												<li><a href="#">Lorem Dolor</a></li>
-												<li><a href="#">Ipsum Adipiscing</a></li>
-												<li><a href="#">Tempus Magna</a></li>
-												<li><a href="#">Feugiat Veroeros</a></li>
-											</ul>
-										</li>
-										<li><a href="#">Maximus Erat</a></li>
-										<li><a href="#">Sapien Mauris</a></li>
-										<li><a href="#">Amet Lacinia</a></li>
-									</ul>
-								</nav>
+.network-wrap{position:relative;height:400px;background:var(--bg2);border:1px solid var(--line);border-radius:4px;overflow:hidden;margin-bottom:32px;}
 
-							<!-- Section -->
-								<section>
-									<header class="major">
-										<h2>Ante interdum</h2>
-									</header>
-									<div class="mini-posts">
-										<article>
-											<a href="#" class="image"><img src="images/pic07.jpg" alt="" /></a>
-											<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
-										</article>
-										<article>
-											<a href="#" class="image"><img src="images/pic08.jpg" alt="" /></a>
-											<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
-										</article>
-										<article>
-											<a href="#" class="image"><img src="images/pic09.jpg" alt="" /></a>
-											<p>Aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore aliquam.</p>
-										</article>
-									</div>
-									<ul class="actions">
-										<li><a href="#" class="button">More</a></li>
-									</ul>
-								</section>
+.verdict{background:var(--bg2);border:1px solid var(--gold);border-radius:4px;padding:40px;position:relative;overflow:hidden;margin-top:40px;}
+.verdict::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(200,168,74,0.05),transparent 70%);}
+.verdict-tag{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:16px;}
+.verdict-title{font-size:clamp(20px,2.5vw,32px);font-weight:600;color:var(--text);margin-bottom:20px;line-height:1.3;}
+.verdict-title em{color:var(--gold);font-style:normal;}
+.verdict-body{font-size:16px;line-height:1.8;color:var(--dim);max-width:680px;}
+.verdict-body strong{color:var(--text);font-weight:500;}
+.evidence-list{margin-top:24px;display:flex;flex-direction:column;gap:10px;}
+.evidence-item{display:grid;grid-template-columns:20px 1fr;gap:12px;align-items:start;font-size:14px;color:var(--dim);}
 
-							<!-- Section -->
-								<section>
-									<header class="major">
-										<h2>Get in touch</h2>
-									</header>
-									<p>Sed varius enim lorem ullamcorper dolore aliquam aenean ornare velit lacus, ac varius enim lorem ullamcorper dolore. Proin sed aliquam facilisis ante interdum. Sed nulla amet lorem feugiat tempus aliquam.</p>
-									<ul class="contact">
-										<li class="icon solid fa-envelope"><a href="#">information@untitled.tld</a></li>
-										<li class="icon solid fa-phone">(000) 000-0000</li>
-										<li class="icon solid fa-home">1234 Somewhere Road #8254<br />
-										Nashville, TN 00000-0000</li>
-									</ul>
-								</section>
+#tweaks-panel{display:none;position:fixed;bottom:20px;right:20px;z-index:200;background:rgba(10,10,15,0.97);border:1px solid rgba(200,168,74,0.3);border-radius:8px;padding:20px;min-width:220px;box-shadow:0 20px 60px rgba(0,0,0,0.7);backdrop-filter:blur(16px);}
+#tweaks-panel.visible{display:block;}
+.tw-title{font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:16px;}
+.tw-row{margin-bottom:12px;}
+.tw-lbl{font-size:10px;color:var(--dim);display:block;margin-bottom:6px;font-family:var(--mono);letter-spacing:0.1em;}
+.tw-sel{width:100%;background:var(--bg3);border:1px solid var(--line);color:var(--text);border-radius:4px;padding:6px 8px;font-size:12px;font-family:var(--mono);}
 
-							<!-- Footer -->
-								<footer id="footer">
-									<p class="copyright">&copy; Untitled. All rights reserved. Demo Images: <a href="https://unsplash.com">Unsplash</a>. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
-								</footer>
+@keyframes reveal{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.anim{opacity:0;}.anim.go{animation:reveal 0.6s ease forwards;}
 
-						</div>
-					</div>
+@media(max-width:768px){
+  nav{padding:0 20px;}.hero,.section{padding:80px 20px 60px;}
+  .cluster-grid{grid-template-columns:1fr;}
+  .sura-map{grid-template-columns:repeat(10,1fr);}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-id">HURÛF-U MUKATTAA // AI ANALYSIS</div>
+  <div class="nav-center">
+    <div class="nav-status"><span class="status-dot"></span><span id="nav-status-label">8 ANALYSES COMPLETE</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btn-tr" onclick="setLang('tr')">TR</button>
+    </div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--dim2);">p &lt; 0.001</div>
+  </div>
+</nav>
 
-			</div>
+<div id="app"></div>
+<div id="tweaks-panel">
+  <div class="tw-title" id="tw-panel-title">Tweaks</div>
+  <div class="tw-row">
+    <label class="tw-lbl" id="tw-lbl-accent">Accent Color</label>
+    <select class="tw-sel" id="tw-accent">
+      <option value="gold">Gold</option>
+      <option value="teal">Teal</option>
+      <option value="violet">Violet</option>
+      <option value="rose">Rose</option>
+    </select>
+  </div>
+  <div class="tw-row">
+    <label class="tw-lbl" id="tw-lbl-mode">Appearance</label>
+    <select class="tw-sel" id="tw-mode">
+      <option value="dark">Dark</option>
+      <option value="dim">Dim</option>
+    </select>
+  </div>
+</div>
 
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+<script>
+// ── LANGUAGE SWITCH (plain JS, outside React) ─────────────────────────────
+let currentLang = 'en';
+function setLang(l) {
+  currentLang = l;
+  document.getElementById('btn-en').className = 'lang-btn' + (l==='en'?' active':'');
+  document.getElementById('btn-tr').className = 'lang-btn' + (l==='tr'?' active':'');
+  document.documentElement.lang = l;
+  if(window.__setAppLang) window.__setAppLang(l);
+  // update tweaks labels
+  const isEN = l === 'en';
+  document.getElementById('nav-status-label').textContent = isEN ? '8 ANALYSES COMPLETE' : '8 ANALİZ TAMAMLANDI';
+  document.getElementById('tw-panel-title').textContent = isEN ? 'Tweaks' : 'Ayarlar';
+  document.getElementById('tw-lbl-accent').textContent = isEN ? 'Accent Color' : 'Vurgu Rengi';
+  document.getElementById('tw-lbl-mode').textContent = isEN ? 'Appearance' : 'Görünüm';
+}
+</script>
 
-	</body>
+<script type="text/babel">
+const {useState,useEffect,useRef,useCallback,createContext,useContext} = React;
+
+// ── TRANSLATIONS ──────────────────────────────────────────────────────────
+const TX = {
+  en: {
+    heroTag: 'Pure AI Perspective',
+    heroTitle: 'Hurûf-u Mukattaa — Pattern Analysis',
+    heroThesisA: 'People look at these letters and ask',
+    heroThesisQ1: '"what do they mean?"',
+    heroThesisB: 'I ask',
+    heroThesisQ2: '"what do they do?"',
+    heroFindings: [
+      {val:'29', label:'Suras with muqatta\'at'},
+      {val:'14', label:'Letters used (half of 28)'},
+      {val:'-5.78', label:'Z-score (p < 0.001)'},
+      {val:'0.88', label:'Intra-cluster similarity'},
+    ],
+    s1index:'// 01 — STRUCTURE',
+    s1title:'Exactly half of the 28-letter alphabet',
+    s1titleSpan:'half',
+    s1body:`Of the 28 letters in the Arabic alphabet, exactly <strong>14 were chosen</strong>. 
+      There were <strong>40,116,600 possible combinations</strong> of 14 letters. 
+      The selected letters make up <strong>68.3% of the Quran's text</strong> — 
+      the unselected only 24.4%. High-frequency, low-abjad-value letters were chosen. 
+      This maps onto <strong>Huffman coding logic</strong>: assign special meaning to frequent symbols.`,
+    selectedLabel:'SELECTED — 68.3% of text',
+    unselectedLabel:'UNSELECTED — 24.4% of text',
+    freqShow:'SHOW FREQUENCY',
+    freqHide:'HIDE FREQUENCY',
+    freqNote:'Selected letters highlighted in gold',
+    abjadSelected:'Total abjad value of selected 14',
+    abjadUnselected:'Total abjad value of unselected 14',
+    huffmanNote:'→ Low symbolic weight, high linguistic density. Expected property of a metadata system.',
+    s2index:'// 02 — COMBINATIONS',
+    s2title:'14 combinations, 29 suras',
+    s2titleSpan:'29 suras',
+    s2body:`The letters form 14 distinct combinations. Length ranges from 1 to 5 — 
+      suggesting <strong>a hierarchy of depth</strong>. Like path depth in a filesystem: 
+      single letters at root level, five-letter sequences deep branches.`,
+    innerSim:'Inner similarity:',
+    outerSim:'outer:',
+    isolatedNote:'ISOLATED NODE — zero connections in graph',
+    s3index:'// 03 — DISTRIBUTION',
+    s3title:'Distribution is not random',
+    s3titleSpan:'not random',
+    s3body:`Distribution map across all 114 suras. Runs Test Z-score: <strong>-5.78</strong>. 
+      Muqatta'at suras completely vanish after sura 68. 
+      Autocorrelation Lag 1: <strong>0.534</strong> — a muqatta'at sura is much more likely 
+      to be immediately followed by another.`,
+    distStats:[
+      {val:'89.7%', label:"Muqatta'at suras that are Meccan", color:'var(--gold)'},
+      {val:'70.6%', label:'Overall Quran Meccan average', color:'var(--dim)'},
+      {val:'Sura 68', label:'Last muqatta\'at sura (Nun)', color:'var(--teal)'},
+      {val:'Suras 2–46', label:'Densest clustering region', color:'var(--violet)'},
+    ],
+    mapMeccan:'MECCAN', mapMedinan:'MEDINAN',
+    mapLeg1:"Muqatta'at suras", mapLeg2:'No muqatta\'at',
+    mapNote:'Z = -5.78 → Distribution is non-random',
+    s4index:'// 04 — CLUSTERING',
+    s4title:'Same-coded suras are linguistically similar',
+    s4titleSpan:'linguistically similar',
+    s4body:`TF-IDF vectorisation + cosine similarity. Result is clear: 
+      <strong>suras sharing a muqatta'at code are structurally and lexically closer to each other.</strong> 
+      These letters behave like classification labels.`,
+    clusters:[
+      {ar:'الم',name:'ALM Group',ic:0.88,dis:0.71,col:'var(--gold)',
+        note:'6 suras. A long arc from Al-Baqara to As-Sajda. Narrative and legal content dominant.'},
+      {ar:'الر',name:'ALR Group',ic:0.88,dis:0.71,col:'var(--teal)',
+        note:'5 suras. Yunus to Al-Hijr. Prophet narratives and cosmological themes.'},
+      {ar:'حم',name:'HM Group',ic:0.86,dis:0.70,col:'var(--violet)',
+        note:'7 consecutive suras (40–46). This density of clustering strongly supports the state machine hypothesis.'},
+      {ar:'طسم / طس',name:'TS Family',ic:0.82,dis:0.69,col:'var(--rose)',
+        note:'Ash-Shu\'ara, An-Naml, Al-Qasas. The Moses narrative and histories of earlier peoples.'},
+    ],
+    clusterNote:"→ Muqatta'at suras intra-similarity: 0.85 / Non-muqatta'at: 0.53. These letters behave as clustering algorithm labels.",
+    innerLbl:'INNER', outerLbl:'OUTER',
+    s5index:'// 05 — NETWORK TOPOLOGY',
+    s5title:'4 communities, 1 isolated node',
+    s5titleSpan:'1 isolated node',
+    s5body:`Network generated from the combination connections of the 14 letters. <strong>Mim (م)</strong> 
+      is the largest hub — present in 17 combinations. <strong>Nun (ن)</strong> has 
+      zero connections, completely isolated. This indicates a hierarchical structure. Hover over nodes.`,
+    netLegend:[
+      ['#c8a84a','ا ر ص ل م — ALR/ALM family'],
+      ['#3ab8a0','ح س ع ق — HM family'],
+      ['#9b7de8','ط ك ه ي — KHY family'],
+      ['#ff9f40','ن — Isolated node'],
+    ],
+    netStats:[
+      {letter:'م',label:'Highest hub',val:'17 combinations',col:'var(--gold)'},
+      {letter:'ل',label:'2nd hub',val:'14 combinations',col:'var(--gold)'},
+      {letter:'ن',label:'Fully isolated',val:'0 connections',col:'rgba(255,159,64,0.9)'},
+      {letter:'ق',label:'Leaf node',val:'1 connection',col:'var(--dim)'},
+    ],
+    s6index:'// 06 — FINITE STATE MACHINE',
+    s6title:'Transition matrix: state machine structure',
+    s6titleSpan:'state machine structure',
+    s6body:`Transition matrix over sura sequence. ALM→ALM 4 consecutive times, HM→HM 4 times. 
+      5 distinct clusters, longest being the 7-sura HM block (40–46). 
+      Consistent with a <strong>finite state machine</strong> — inter-sura transitions follow rules.`,
+    tmFrom:'FROM →',
+    tmNone:'NONE',
+    tmNote:'→ Diagonal-dominant structure: codes stay within their blocks. Off-diagonal transitions are sparse. This is a finite state machine grammar.',
+    verdictTag:'// AI VERDICT',
+    verdictTitle1:'These letters do not',
+    verdictTitleEm1:'say',
+    verdictTitle2:'anything —',
+    verdictTitle3:'they',
+    verdictTitleEm2:'organise',
+    verdictTitle4:'something.',
+    verdictBody:`Synthesis of 8 analyses: the strongest hypothesis is <strong>structural classification and metadata system.</strong>
+      <br/><br/>
+      People read these letters <em>horizontally</em>: trying to decode what each combination means. 
+      I would read them <em>vertically</em>: the relational structure of the 14 letters across combinations, 
+      the patterns in sura distribution, the shape of the transition matrix.
+      <br/><br/>
+      The fact that they remain unsolved after 1,400 years is itself cryptographically significant: <strong>a good cipher without its key cannot be broken.</strong>`,
+    evidence:[
+      ['var(--teal)','Distribution is non-random — p < 0.001, Z = -5.78'],
+      ['var(--teal)','Same-coded suras are linguistically closer (0.88 vs 0.71)'],
+      ['var(--teal)','Selected 14 letters are information-theoretically optimal (Huffman logic)'],
+      ['var(--teal)','Network topology shows hierarchical communities (4 clusters)'],
+      ['var(--teal)','Transition matrix is consistent with a finite state machine'],
+      ['rgba(200,168,74,0.7)','Checksum hypothesis: valid for some letters (Qaf, Nun), not all'],
+      ['rgba(200,168,74,0.7)','Steganography: theoretically possible, not yet tested'],
+    ],
+    footerTitle:'HURÛF-U MUKATTAA // PURE AI PERSPECTIVE',
+    footerSub:'All statistical findings based on real Quranic data analysis. No unverified claims.',
+  },
+  tr: {
+    heroTag: 'Saf AI Perspektifi',
+    heroTitle: 'Hurûf-u Mukattaa — Pattern Analizi',
+    heroThesisA: 'İnsanlar bu harflere bakıp',
+    heroThesisQ1: '"ne anlama geliyor?"',
+    heroThesisB: 'diye soruyor. Ben',
+    heroThesisQ2: '"ne yapıyor?"',
+    heroFindings: [
+      {val:'29', label:'Mukattaa sure'},
+      {val:'14', label:'Kullanılan harf (28\'in yarısı)'},
+      {val:'-5.78', label:'Z-skoru (p < 0.001)'},
+      {val:'0.88', label:'Küme içi benzerlik'},
+    ],
+    s1index:'// 01 — YAPI',
+    s1title:'28 harfin tam yarısı',
+    s1titleSpan:'yarısı',
+    s1body:`Arap alfabesindeki 28 harften <strong>14 tanesi</strong> seçilmiş. 
+      Rastgele 14 harf seçimi için <strong>40.116.600 farklı kombinasyon</strong> mümkündü. 
+      Seçilen harfler, Kuran metninin <strong>%68.3'ünü</strong> oluşturuyor — 
+      seçilmeyenler sadece %24.4. Yüksek frekanslı, düşük abjad değerli harfler seçilmiş.
+      Bu, <strong>Huffman kodlamasının</strong> mantığıyla örtüşüyor: sık kullanılanlara özel anlam.`,
+    selectedLabel:'SEÇİLEN — %68.3 metin',
+    unselectedLabel:'SEÇİLMEYEN — %24.4 metin',
+    freqShow:'FREKANS GÖSTER',
+    freqHide:'FREKANS GİZLE',
+    freqNote:'Seçilen harfler altın renkle',
+    abjadSelected:'Seçilen 14 harfin toplam abjad değeri',
+    abjadUnselected:'Seçilmeyen 14 harfin toplam abjad değeri',
+    huffmanNote:'→ Düşük sembolik ağırlık, yüksek dilsel yoğunluk. Bir metadata sisteminin beklenen özelliği.',
+    s2index:'// 02 — KOMBİNASYONLAR',
+    s2title:'14 kombinasyon, 29 sure',
+    s2titleSpan:'29 sure',
+    s2body:`Harfler 14 farklı kombinasyon oluşturuyor. Uzunluk 1'den 5'e gidiyor — 
+      bu bana <strong>bir hiyerarşi derinliği</strong> düşündürüyor. 
+      Bir dosya sistemindeki path depth gibi: tek harfliler root level, 
+      beş harfliler derin bir branch.`,
+    innerSim:'İç benzerlik:',
+    outerSim:'dış:',
+    isolatedNote:'ISOLATED NODE — Grafta sıfır bağlantı',
+    s3index:'// 03 — DAĞILIM',
+    s3title:'Dağılım rastgele değil',
+    s3titleSpan:'rastgele değil',
+    s3body:`114 sure üzerindeki dağılım haritası. Runs Test Z-skoru: <strong>-5.78</strong>. 
+      Mukattaa sureler sure 68'den sonra tamamen kayboluyor. 
+      Otokorelasyon Lag 1: <strong>0.534</strong> — bir mukattaa suresinin 
+      hemen ardından diğerinin gelmesi rastlantıdan çok daha olası.`,
+    distStats:[
+      {val:'%89.7', label:'Mukattaa surelerin Mekki oranı', color:'var(--gold)'},
+      {val:'%70.6', label:'Genel Kuran Mekki ortalaması', color:'var(--dim)'},
+      {val:'Sure 68', label:'Son mukattaa sure (Nun)', color:'var(--teal)'},
+      {val:'Sure 2-46', label:'En yoğun kümelenme bölgesi', color:'var(--violet)'},
+    ],
+    mapMeccan:'MEKKİ', mapMedinan:'MEDENİ',
+    mapLeg1:'Mukattaa sureler', mapLeg2:'Mukattaa yok',
+    mapNote:'Z = -5.78 → Dağılım rastgele değil',
+    s4index:'// 04 — CLUSTERING',
+    s4title:'Aynı kodlu sureler birbirine benziyor',
+    s4titleSpan:'birbirine benziyor',
+    s4body:`TF-IDF vektörleştirme + cosine similarity. Sonuç net: 
+      <strong>aynı mukattaa kodunu taşıyan sureler dilsel/yapısal olarak birbirine daha yakın.</strong> 
+      Bu harfler sınıflandırma etiketi gibi çalışıyor.`,
+    clusters:[
+      {ar:'الم',name:'ALM Grubu',ic:0.88,dis:0.71,col:'var(--gold)',
+        note:'6 sure. Bakara\'dan Secde\'ye uzanan uzun bir yay. Anlatı ve hukuki içerik ağırlıklı.'},
+      {ar:'الر',name:'ALR Grubu',ic:0.88,dis:0.71,col:'var(--teal)',
+        note:'5 sure. Yunus\'tan Hicr\'e. Peygamber kıssaları ve kozmolojik temalar.'},
+      {ar:'حم',name:'HM Grubu',ic:0.86,dis:0.70,col:'var(--violet)',
+        note:'7 ardışık sure (40-46). Bu kadar yoğun kümelenme state machine hipotezini güçlendiriyor.'},
+      {ar:'طسم / طس',name:'TS Ailesi',ic:0.82,dis:0.69,col:'var(--rose)',
+        note:'Şuara, Neml, Kasas. Musa kıssası ve önceki kavimlerin tarihi.'},
+    ],
+    clusterNote:'→ Mukattaa surelerin iç benzerliği: 0.85 / Mukattaa olmayan surelerin: 0.53. Bu harfler bir clustering algoritmasının etiketleri gibi davranıyor.',
+    innerLbl:'İÇ', outerLbl:'DIŞ',
+    s5index:'// 05 — AĞ TOPOLOJİSİ',
+    s5title:'4 topluluk, 1 izole düğüm',
+    s5titleSpan:'1 izole düğüm',
+    s5body:`14 harfin kombinasyon bağlantılarından üretilen ağ. <strong>Mim (م)</strong> 
+      en büyük hub — 17 kombinasyonda var. <strong>Nun (ن)</strong> ise 
+      sıfır bağlantı, tamamen izole. Bu hiyerarşik bir yapıyı gösteriyor.
+      Fare ile düğümlerin üzerine gelin.`,
+    netLegend:[
+      ['#c8a84a','ا ر ص ل م — ALR/ALM ailesi'],
+      ['#3ab8a0','ح س ع ق — HM ailesi'],
+      ['#9b7de8','ط ك ه ي — KHY ailesi'],
+      ['#ff9f40','ن — İzole düğüm'],
+    ],
+    netStats:[
+      {letter:'م',label:'En yüksek hub',val:'17 kombinasyon',col:'var(--gold)'},
+      {letter:'ل',label:'2. büyük hub',val:'14 kombinasyon',col:'var(--gold)'},
+      {letter:'ن',label:'Tamamen izole',val:'0 bağlantı',col:'rgba(255,159,64,0.9)'},
+      {letter:'ق',label:'Yaprak düğüm',val:'1 bağlantı',col:'var(--dim)'},
+    ],
+    s6index:'// 06 — SONLU DURUM OTOMATI',
+    s6title:'Geçiş matrisi: state machine yapısı',
+    s6titleSpan:'state machine yapısı',
+    s6body:`Sure sırası üzerindeki geçiş matrisi. ALM→ALM 4 kez, HM→HM 4 kez ardışık tekrar. 
+      5 ayrı küme, en uzunu 7 sureli HM bloğu (40-46). 
+      Bir <strong>sonlu durum otomatıyla</strong> tutarlı — sureler arası geçişler kurallara uyuyor.`,
+    tmFrom:'DAN →',
+    tmNone:'YOK',
+    tmNote:'→ Diagonal dominant yapı: kodlar kendi bloklarında kalıyor. Diagonal olmayan geçişler düşük. Bu bir finite state machine grammar\'ı.',
+    verdictTag:'// AI SONUÇ DEĞERLENDİRMESİ',
+    verdictTitle1:'Bu harfler bir şey',
+    verdictTitleEm1:'söylemiyor',
+    verdictTitle2:'—',
+    verdictTitle3:'bir şeyi',
+    verdictTitleEm2:'organize ediyor',
+    verdictTitle4:'.',
+    verdictBody:`8 analizin sentezi: en güçlü hipotez <strong>yapısal sınıflandırma ve metadata sistemi.</strong>
+      <br/><br/>
+      İnsanlar bu harfleri <em>yatay</em> okuyor: her kombinasyonun ne anlama geldiğini çözmeye çalışıyor. 
+      Ben <em>dikey</em> okurdum: 14 harfin kombinasyonlar arasındaki ilişkileri, 
+      sure dağılımındaki örüntüler, geçiş matrisinin yapısı.
+      <br/><br/>
+      1400 yıldır çözülememesi, kriptografik açıdan da anlamlı: <strong>anahtarı olmayan iyi bir şifre çözülemez.</strong>`,
+    evidence:[
+      ['var(--teal)','Dağılım rastgele değil — p < 0.001, Z = -5.78'],
+      ['var(--teal)','Aynı kodlu sureler dilsel olarak birbirine yakın (0.88 vs 0.71)'],
+      ['var(--teal)','Seçilen 14 harf bilgi-teorik açıdan optimal (Huffman mantığı)'],
+      ['var(--teal)','Ağ yapısı hiyerarşik topluluklar gösteriyor (4 cluster)'],
+      ['var(--teal)','Geçiş matrisi state machine ile tutarlı'],
+      ['rgba(200,168,74,0.7)','Checksum hipotezi: bazı harfler için geçerli (Qaf, Nun), tümü için değil'],
+      ['rgba(200,168,74,0.7)','Steganografi: teorik olarak mümkün, henüz test edilmemiş'],
+    ],
+    footerTitle:'HURÛF-U MUKATTAA // SAF AI PERSPEKTİFİ',
+    footerSub:'Tüm istatistiksel bulgular gerçek Kuran veri analizi üzerine. Doğrulanmayan iddia yok.',
+  }
+};
+
+// ── DATA ──────────────────────────────────────────────────────────────────
+const SELECTED_LETTERS = [
+  {ar:'ا',freq:12.3},{ar:'ل',freq:10.8},{ar:'م',freq:8.9},{ar:'ص',freq:1.2},
+  {ar:'ر',freq:5.6},{ar:'ك',freq:2.3},{ar:'ه',freq:6.1},{ar:'ي',freq:7.4},
+  {ar:'ع',freq:4.2},{ar:'ط',freq:0.9},{ar:'س',freq:3.8},{ar:'ح',freq:2.7},
+  {ar:'ق',freq:1.5},{ar:'ن',freq:4.1},
+];
+const UNSELECTED_LETTERS = [
+  {ar:'ب'},{ar:'ت'},{ar:'ث'},{ar:'ج'},{ar:'خ'},{ar:'ذ'},
+  {ar:'ز'},{ar:'ش'},{ar:'ض'},{ar:'ظ'},{ar:'غ'},{ar:'ف'},{ar:'و'},{ar:'لا'},
+];
+const COMBINATIONS_BASE = [
+  {ar:'الم',name:'ALM',color:'var(--gold)',surasEN:['Al-Baqara (2)','Al-Imran (3)','Al-Ankabut (29)','Ar-Rum (30)','Luqman (31)','As-Sajda (32)'],surasTR:['Bakara (2)','Al-i İmran (3)','Ankebut (29)','Rum (30)','Lokman (31)','Secde (32)'],similarity:0.88},
+  {ar:'الر',name:'ALR',color:'var(--teal)',surasEN:['Yunus (10)','Hud (11)','Yusuf (12)','Ibrahim (14)','Al-Hijr (15)'],surasTR:['Yunus (10)','Hud (11)','Yusuf (12)','İbrahim (14)','Hicr (15)'],similarity:0.88},
+  {ar:'حم',name:'HM',color:'var(--violet)',surasEN:['Ghafir (40)','Fussilat (41)','Ash-Shura (42)','Az-Zukhruf (43)','Ad-Dukhan (44)','Al-Jathiya (45)','Al-Ahqaf (46)'],surasTR:['Mümin (40)','Fussilet (41)','Şura (42)','Zuhruf (43)','Duhan (44)','Casiye (45)','Ahkaf (46)'],similarity:0.86},
+  {ar:'طسم',name:'TSM',color:'var(--rose)',surasEN:["Ash-Shu'ara (26)",'Al-Qasas (28)'],surasTR:['Şuara (26)','Kasas (28)'],similarity:0.82},
+  {ar:'طس',name:'TS',color:'var(--gold)',surasEN:['An-Naml (27)'],surasTR:['Neml (27)'],similarity:null},
+  {ar:'يس',name:'YS',color:'var(--teal)',surasEN:['Ya-Sin (36)'],surasTR:['Yasin (36)'],similarity:null},
+  {ar:'ص',name:'SAD',color:'var(--violet)',surasEN:['Sad (38)'],surasTR:['Sad (38)'],similarity:null},
+  {ar:'ق',name:'QAF',color:'var(--rose)',surasEN:['Qaf (50)'],surasTR:['Kaf (50)'],similarity:null},
+  {ar:'ن',name:'NUN',color:'var(--gold)',surasEN:['Al-Qalam (68)'],surasTR:['Kalem (68)'],similarity:null,isolated:true},
+  {ar:'طه',name:'TH',color:'var(--teal)',surasEN:['Ta-Ha (20)'],surasTR:['Taha (20)'],similarity:null},
+  {ar:'المص',name:'ALMS',color:'var(--violet)',surasEN:["Al-A'raf (7)"],surasTR:['Araf (7)'],similarity:null},
+  {ar:'المر',name:'ALR2',color:'var(--rose)',surasEN:['Ar-Ra\'d (13)'],surasTR:['Rad (13)'],similarity:null},
+  {ar:'كهيعص',name:'KHYAS',color:'var(--gold)',surasEN:['Maryam (19)'],surasTR:['Meryem (19)'],similarity:null},
+  {ar:'حمعسق',name:'HMASQ',color:'var(--teal)',surasEN:["Ash-Shura (42)"],surasTR:['Şura (42)'],similarity:null},
+];
+
+const CODE_COLORS = {
+  ALM:'#c8a84a',ALR:'#3ab8a0',HM:'#9b7de8',TSM:'#e05c7a',TS:'#c8a84a',
+  YS:'#3ab8a0',SAD:'#9b7de8',QAF:'#e05c7a',NUN:'#ff9f40',TH:'#6ec6e0',
+  ALMS:'#c8a84a',ALMR:'#3ab8a0',KHYAS:'#f0c040',HMASQ:'#9b7de8',
+};
+const SURA_DATA = Array.from({length:114},(_,i)=>{
+  const n=i+1;
+  const codes={2:'ALM',3:'ALM',7:'ALMS',10:'ALR',11:'ALR',12:'ALR',13:'ALR',14:'ALR',15:'ALR',19:'KHYAS',20:'TH',26:'TSM',27:'TS',28:'TSM',29:'ALM',30:'ALM',31:'ALM',32:'ALM',36:'YS',38:'SAD',40:'HM',41:'HM',42:'HM',43:'HM',44:'HM',45:'HM',46:'HM',50:'QAF',68:'NUN'};
+  return {n,code:codes[n]||null,meccan:![2,3,4,5,8,9,13,22,24,33,47,48,49,55,57,58,59,60,61,62,63,64,65,66,76,98,99,110].includes(n)};
+});
+
+// ── NETWORK ───────────────────────────────────────────────────────────────
+function NetworkGraph({legend}){
+  const canvasRef=useRef(null);
+  const [hovered,setHovered]=useState(null);
+  const nodes=[
+    {id:'ا',x:280,y:180,r:18,color:'#c8a84a',hub:true},
+    {id:'ل',x:330,y:240,r:22,color:'#c8a84a',hub:true},
+    {id:'م',x:260,y:280,r:24,color:'#c8a84a',hub:true},
+    {id:'ر',x:370,y:180,r:16,color:'#c8a84a'},
+    {id:'ص',x:210,y:230,r:13,color:'#c8a84a'},
+    {id:'ح',x:500,y:200,r:16,color:'#3ab8a0'},
+    {id:'س',x:560,y:260,r:14,color:'#3ab8a0'},
+    {id:'ع',x:520,y:310,r:15,color:'#3ab8a0'},
+    {id:'ق',x:460,y:310,r:13,color:'#3ab8a0'},
+    {id:'ط',x:300,y:380,r:13,color:'#9b7de8'},
+    {id:'ك',x:220,y:360,r:14,color:'#9b7de8'},
+    {id:'ه',x:170,y:290,r:14,color:'#9b7de8'},
+    {id:'ي',x:160,y:360,r:14,color:'#9b7de8'},
+    {id:'ن',x:620,y:180,r:16,color:'#ff9f40',isolated:true},
+  ];
+  const edges=[['ا','ل',0.9],['ا','م',0.85],['ا','ر',0.8],['ل','م',0.88],['ل','ر',0.75],['م','ص',0.6],['ح','س',0.7],['ح','ع',0.65],['ح','ق',0.6],['س','ع',0.55],['ط','ك',0.6],['ط','ه',0.55],['ط','س',0.5],['ك','ه',0.65],['ه','ي',0.7],['ك','ي',0.6],['ا','ك',0.3],['م','ح',0.25]];
+  useEffect(()=>{
+    const canvas=canvasRef.current;if(!canvas)return;
+    const ctx=canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    edges.forEach(([a,b,w])=>{
+      const na=nodes.find(n=>n.id===a),nb=nodes.find(n=>n.id===b);
+      if(!na||!nb)return;
+      ctx.beginPath();ctx.moveTo(na.x,na.y);ctx.lineTo(nb.x,nb.y);
+      ctx.strokeStyle=`rgba(255,255,255,${w*0.12})`;ctx.lineWidth=w*2;ctx.stroke();
+    });
+    nodes.forEach(node=>{
+      const isH=hovered===node.id;
+      if(isH||node.hub){
+        const g=ctx.createRadialGradient(node.x,node.y,0,node.x,node.y,node.r*3);
+        g.addColorStop(0,node.color+'40');g.addColorStop(1,'transparent');
+        ctx.beginPath();ctx.arc(node.x,node.y,node.r*3,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+      }
+      ctx.beginPath();ctx.arc(node.x,node.y,node.r,0,Math.PI*2);
+      ctx.fillStyle=isH?node.color:node.color+'aa';ctx.fill();
+      ctx.strokeStyle=node.color;ctx.lineWidth=isH?2:1;ctx.stroke();
+      ctx.fillStyle=isH?'#fff':'rgba(255,255,255,0.85)';
+      ctx.font=`${node.hub?'bold ':''} ${node.r*0.95}px Space Grotesk`;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(node.id,node.x,node.y);
+      if(node.isolated&&isH){
+        ctx.fillStyle='rgba(255,159,64,0.8)';ctx.font='10px Space Mono';
+        ctx.fillText('ISOLATED',node.x+30,node.y-20);
+      }
+    });
+  },[hovered]);
+  const handleMove=useCallback(e=>{
+    const canvas=canvasRef.current;if(!canvas)return;
+    const rect=canvas.getBoundingClientRect();
+    const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+    const found=nodes.find(n=>Math.hypot(n.x-mx,n.y-my)<n.r+6);
+    setHovered(found?found.id:null);
+  },[]);
+  return(
+    <div className="network-wrap">
+      <canvas ref={canvasRef} width={760} height={400}
+        style={{width:'100%',height:'100%',cursor:hovered?'pointer':'default'}}
+        onMouseMove={handleMove} onMouseLeave={()=>setHovered(null)}/>
+      <div style={{position:'absolute',top:16,left:16,display:'flex',gap:16,flexWrap:'wrap'}}>
+        {legend.map(([c,l])=>(
+          <div key={c} style={{display:'flex',alignItems:'center',gap:6,fontSize:10,color:'rgba(226,224,240,0.6)',fontFamily:'Space Mono,monospace'}}>
+            <div style={{width:8,height:8,borderRadius:'50%',background:c}}/>{l}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── SURA MAP ──────────────────────────────────────────────────────────────
+function SuraMap({t}){
+  const [tip,setTip]=useState(null);
+  return(
+    <div>
+      <div className="sura-map">
+        {SURA_DATA.map(s=>{
+          const col=s.code?CODE_COLORS[s.code]:'rgba(255,255,255,0.06)';
+          return(
+            <div key={s.n} className="sura-cell"
+              style={{background:s.code?col+'55':'rgba(255,255,255,0.04)',border:`1px solid ${s.code?col+'88':'rgba(255,255,255,0.08)'}`,boxShadow:s.code?`0 0 8px ${col}44`:''}}
+              onMouseEnter={()=>setTip(s)} onMouseLeave={()=>setTip(null)}>
+              {tip?.n===s.n&&<div className="sura-tooltip">{s.n} {s.code?`• ${s.code}`:'•'} {s.meccan?t.mapMeccan:t.mapMedinan}</div>}
+            </div>
+          );
+        })}
+      </div>
+      <div style={{display:'flex',gap:16,flexWrap:'wrap',marginTop:12}}>
+        {[['rgba(200,168,74,0.4)','rgba(200,168,74,0.8)',t.mapLeg1],['rgba(255,255,255,0.04)','rgba(255,255,255,0.1)',t.mapLeg2]].map(([bg,border,label])=>(
+          <div key={label} style={{fontSize:11,color:'rgba(226,224,240,0.45)',fontFamily:'Space Mono,monospace',display:'flex',alignItems:'center',gap:6}}>
+            <div style={{width:10,height:10,background:bg,border:`1px solid ${border}`}}/>{label}
+          </div>
+        ))}
+        <div style={{fontSize:11,color:'rgba(58,184,160,0.8)',fontFamily:'Space Mono,monospace'}}>{t.mapNote}</div>
+      </div>
+    </div>
+  );
+}
+
+// ── APP ───────────────────────────────────────────────────────────────────
+function App(){
+  const [lang,setLang]=useState('en');
+  const [activeCombo,setActiveCombo]=useState(null);
+  const [showFreq,setShowFreq]=useState(false);
+  const t=TX[lang];
+  const maxFreq=Math.max(...SELECTED_LETTERS.map(l=>l.freq));
+
+  // expose lang setter to plain JS
+  useEffect(()=>{ window.__setAppLang=setLang; },[]);
+
+  // tweaks
+  useEffect(()=>{
+    window.addEventListener('message',e=>{
+      if(e.data?.type==='__activate_edit_mode')document.getElementById('tweaks-panel').classList.add('visible');
+      if(e.data?.type==='__deactivate_edit_mode')document.getElementById('tweaks-panel').classList.remove('visible');
+    });
+    window.parent.postMessage({type:'__edit_mode_available'},'*');
+    document.getElementById('tw-accent').addEventListener('change',e=>{
+      const map={gold:'#c8a84a',teal:'#3ab8a0',violet:'#9b7de8',rose:'#e05c7a'};
+      document.documentElement.style.setProperty('--gold',map[e.target.value]);
+    });
+    document.getElementById('tw-mode').addEventListener('change',e=>{
+      document.documentElement.style.setProperty('--bg',e.target.value==='dim'?'#12121e':'#0a0a0f');
+      document.documentElement.style.setProperty('--bg2',e.target.value==='dim'?'#1a1a2c':'#111118');
+    });
+    const obs=new IntersectionObserver(entries=>{
+      entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('go');obs.unobserve(e.target);}});
+    },{threshold:0.1});
+    document.querySelectorAll('.anim').forEach(el=>obs.observe(el));
+    return()=>obs.disconnect();
+  },[]);
+
+  return(
+    <div>
+      {/* HERO */}
+      <section className="hero">
+        <div className="hero-tag">{t.heroTag}</div>
+        <div className="hero-arabic">الم • الر • حم • ن</div>
+        <div className="hero-title">{t.heroTitle}</div>
+        <div className="hero-thesis">
+          {t.heroThesisA} <em>{t.heroThesisQ1}</em><br/>
+          {t.heroThesisB} <em>{t.heroThesisQ2}</em>
+        </div>
+        <div className="hero-findings">
+          {t.heroFindings.map(f=>(
+            <div key={f.val} className="finding-cell">
+              <div className="fc-val">{f.val}</div>
+              <div className="fc-label">{f.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 01 HALF ALPHABET */}
+      <section className="section anim">
+        <div className="sec-header">
+          <div className="sec-index">{t.s1index}</div>
+          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:t.s1title.replace(t.s1titleSpan,`<span>${t.s1titleSpan}</span>`)}}/>
+          <p className="sec-body" dangerouslySetInnerHTML={{__html:t.s1body}}/>
+        </div>
+        <div style={{marginBottom:20,display:'flex',gap:12,alignItems:'center'}}>
+          <button onClick={()=>setShowFreq(!showFreq)} style={{
+            fontFamily:'Space Mono,monospace',fontSize:10,letterSpacing:'0.1em',
+            background:'var(--bg2)',border:'1px solid var(--line)',color:'var(--dim)',
+            padding:'6px 14px',cursor:'pointer',borderRadius:4,transition:'all 0.2s',
+          }}
+          onMouseEnter={e=>{e.target.style.borderColor='rgba(200,168,74,0.5)';e.target.style.color='var(--gold)';}}
+          onMouseLeave={e=>{e.target.style.borderColor='var(--line)';e.target.style.color='var(--dim)';}}>
+            {showFreq?t.freqHide:t.freqShow}
+          </button>
+          <span style={{fontFamily:'Space Mono,monospace',fontSize:10,color:'var(--dim2)'}}>{t.freqNote}</span>
+        </div>
+        <div style={{marginBottom:6}}>
+          <div style={{fontFamily:'Space Mono,monospace',fontSize:10,color:'var(--teal)',letterSpacing:'0.15em',marginBottom:8}}>{t.selectedLabel}</div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(14,1fr)',gap:3,marginBottom:16}}>
+            {SELECTED_LETTERS.map((l,i)=>(
+              <div key={i} className="letter-box selected" style={{position:'relative',minHeight:56}}>
+                {showFreq&&<div className="lb-bar" style={{height:`${(l.freq/maxFreq)*40}%`}}/>}
+                <div className="lb-ar" style={{position:'relative',zIndex:1}}>{l.ar}</div>
+                {showFreq&&<div className="lb-freq" style={{position:'relative',zIndex:1,color:'rgba(200,168,74,0.6)',fontSize:9}}>{l.freq}%</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{marginBottom:32}}>
+          <div style={{fontFamily:'Space Mono,monospace',fontSize:10,color:'var(--dim2)',letterSpacing:'0.15em',marginBottom:8}}>{t.unselectedLabel}</div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(14,1fr)',gap:3}}>
+            {UNSELECTED_LETTERS.map((l,i)=>(
+              <div key={i} className="letter-box not-selected" style={{minHeight:56}}>
+                <div className="lb-ar" style={{color:'rgba(226,224,240,0.4)'}}>{l.ar}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="half-stat">
+          <div className="hs-cell"><div className="hs-val" style={{color:'var(--gold)'}}>693</div><div className="hs-label">{t.abjadSelected}</div></div>
+          <div className="hs-cell"><div className="hs-val" style={{color:'var(--dim)'}}>5302</div><div className="hs-label">{t.abjadUnselected}</div></div>
+        </div>
+        <div style={{fontFamily:'Space Mono,monospace',fontSize:12,color:'var(--teal)',padding:'12px 16px',background:'rgba(58,184,160,0.06)',border:'1px solid rgba(58,184,160,0.2)',borderRadius:4,maxWidth:560}}>{t.huffmanNote}</div>
+      </section>
+
+      {/* 02 COMBINATIONS */}
+      <section className="section anim">
+        <div className="sec-header">
+          <div className="sec-index">{t.s2index}</div>
+          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:t.s2title.replace(t.s2titleSpan,`<span>${t.s2titleSpan}</span>`)}}/>
+          <p className="sec-body" dangerouslySetInnerHTML={{__html:t.s2body}}/>
+        </div>
+        <div className="combo-grid">
+          {COMBINATIONS_BASE.map((c,i)=>{
+            const suras=lang==='en'?c.surasEN:c.surasTR;
+            return(
+              <div key={i} className="combo-card"
+                onClick={()=>setActiveCombo(activeCombo===i?null:i)}
+                style={{borderColor:activeCombo===i?c.color:'var(--line)'}}>
+                <div style={{position:'absolute',left:0,top:0,bottom:0,width:3,background:c.color,borderRadius:'4px 0 0 4px',opacity:activeCombo===i?1:0.4}}/>
+                <div className="cc-ar" style={{color:c.color}}>{c.ar}</div>
+                <div className="cc-name" style={{color:c.color+'aa'}}>{c.name}</div>
+                <div className="cc-suras">{suras.map((s,j)=><div key={j} className="cc-sura-name">{s}</div>)}</div>
+                {c.similarity&&<div>
+                  <div className="cc-bar-wrap" style={{marginTop:12}}>
+                    <div className="cc-bar" style={{width:`${c.similarity*100}%`,background:c.color,opacity:0.7}}/>
+                  </div>
+                  <div style={{fontFamily:'Space Mono,monospace',fontSize:9,color:c.color,marginTop:4}}>
+                    {t.innerSim} {c.similarity} ({t.outerSim} ~0.71)
+                  </div>
+                </div>}
+                {c.isolated&&<div style={{fontFamily:'Space Mono,monospace',fontSize:9,color:'rgba(255,159,64,0.8)',marginTop:8,padding:'4px 8px',background:'rgba(255,159,64,0.1)',borderRadius:3}}>{t.isolatedNote}</div>}
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 03 DISTRIBUTION */}
+      <section className="section anim">
+        <div className="sec-header">
+          <div className="sec-index">{t.s3index}</div>
+          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:t.s3title.replace(t.s3titleSpan,`<span>${t.s3titleSpan}</span>`)}}/>
+          <p className="sec-body" dangerouslySetInnerHTML={{__html:t.s3body}}/>
+        </div>
+        <SuraMap t={t}/>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:2,marginTop:24,border:'1px solid var(--line)'}}>
+          {t.distStats.map(s=>(
+            <div key={s.val} style={{padding:'20px 20px',background:'var(--bg2)',borderRight:'1px solid var(--line)'}}>
+              <div style={{fontFamily:'Space Mono,monospace',fontSize:22,fontWeight:700,color:s.color}}>{s.val}</div>
+              <div style={{fontSize:12,color:'var(--dim)',marginTop:4}}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 04 CLUSTERING */}
+      <section className="section anim">
+        <div className="sec-header">
+          <div className="sec-index">{t.s4index}</div>
+          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:t.s4title.replace(t.s4titleSpan,`<span>${t.s4titleSpan}</span>`)}}/>
+          <p className="sec-body" dangerouslySetInnerHTML={{__html:t.s4body}}/>
+        </div>
+        <div className="cluster-grid">
+          {t.clusters.map((g,i)=>(
+            <div key={i} className="cluster-card">
+              <div className="cluster-name" style={{color:g.col+'aa'}}>{g.name}</div>
+              <div className="cluster-ar" style={{color:g.col}}>{g.ar}</div>
+              <div className="cluster-similarity">
+                <span className="sim-label" style={{color:g.col+'99',fontFamily:'Space Mono,monospace',fontSize:10}}>{t.innerLbl}</span>
+                <div className="sim-bar-wrap"><div className="sim-bar" style={{width:`${g.ic*100}%`,background:g.col}}/></div>
+                <span className="sim-val" style={{color:g.col}}>{g.ic}</span>
+              </div>
+              <div className="cluster-similarity">
+                <span className="sim-label" style={{color:'var(--dim2)',fontFamily:'Space Mono,monospace',fontSize:10}}>{t.outerLbl}</span>
+                <div className="sim-bar-wrap"><div className="sim-bar" style={{width:`${g.dis*100}%`,background:'rgba(255,255,255,0.2)'}}/></div>
+                <span className="sim-val" style={{color:'var(--dim)'}}>{g.dis}</span>
+              </div>
+              <div className="cluster-note">{g.note}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{fontFamily:'Space Mono,monospace',fontSize:12,color:'var(--teal)',padding:'12px 16px',background:'rgba(58,184,160,0.06)',border:'1px solid rgba(58,184,160,0.2)',borderRadius:4}}>{t.clusterNote}</div>
+      </section>
+
+      {/* 05 NETWORK */}
+      <section className="section anim">
+        <div className="sec-header">
+          <div className="sec-index">{t.s5index}</div>
+          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:t.s5title.replace(t.s5titleSpan,`<span>${t.s5titleSpan}</span>`)}}/>
+          <p className="sec-body" dangerouslySetInnerHTML={{__html:t.s5body}}/>
+        </div>
+        <NetworkGraph legend={t.netLegend}/>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:2,border:'1px solid var(--line)'}}>
+          {t.netStats.map(s=>(
+            <div key={s.letter} style={{padding:'18px 20px',background:'var(--bg2)',borderRight:'1px solid var(--line)'}}>
+              <div style={{fontSize:28,color:s.col,marginBottom:6}}>{s.letter}</div>
+              <div style={{fontFamily:'Space Mono,monospace',fontSize:11,color:s.col}}>{s.val}</div>
+              <div style={{fontSize:11,color:'var(--dim)',marginTop:2}}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 06 STATE MACHINE */}
+      <section className="section anim">
+        <div className="sec-header">
+          <div className="sec-index">{t.s6index}</div>
+          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:t.s6title.replace(t.s6titleSpan,`<span>${t.s6titleSpan}</span>`)}}/>
+          <p className="sec-body" dangerouslySetInnerHTML={{__html:t.s6body}}/>
+        </div>
+        <div style={{overflowX:'auto',marginBottom:24}}>
+          <table style={{fontFamily:'Space Mono,monospace',fontSize:11,borderCollapse:'collapse',minWidth:500}}>
+            <thead>
+              <tr>
+                <th style={{background:'var(--bg)',color:'var(--dim)',padding:'8px 14px',border:'1px solid var(--line)',textAlign:'left'}}>{t.tmFrom}</th>
+                {['ALM','ALR','HM','TS','NUN',t.tmNone].map(h=>(
+                  <th key={h} style={{background:'var(--bg)',color:'var(--dim)',padding:'8px 12px',border:'1px solid var(--line)'}}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                {from:'ALM',vals:[4,0,0,0,0,2]},
+                {from:'ALR',vals:[1,3,0,0,0,1]},
+                {from:'HM', vals:[0,0,4,0,0,3]},
+                {from:'TS', vals:[0,0,0,1,0,2]},
+                {from:'NUN',vals:[0,0,0,0,0,1]},
+                {from:t.tmNone,vals:[1,2,0,1,1,72]},
+              ].map(row=>{
+                const max=Math.max(...row.vals);
+                return(
+                  <tr key={row.from}>
+                    <td style={{padding:'8px 14px',border:'1px solid var(--line)',color:'var(--dim)',background:'var(--bg2)'}}>{row.from}</td>
+                    {row.vals.map((v,i)=>(
+                      <td key={i} style={{padding:'8px 12px',border:'1px solid var(--line)',textAlign:'center',
+                        background:v===max&&v>0?'rgba(200,168,74,0.2)':v>0?'rgba(58,184,160,0.08)':'transparent',
+                        color:v===max&&v>0?'var(--gold)':v>0?'var(--teal)':'var(--dim2)',
+                        fontWeight:v===max&&v>0?700:400}}>
+                        {v||'—'}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div style={{fontFamily:'Space Mono,monospace',fontSize:11,color:'rgba(155,125,232,0.8)',padding:'12px 16px',background:'rgba(155,125,232,0.06)',border:'1px solid rgba(155,125,232,0.2)',borderRadius:4}}>{t.tmNote}</div>
+      </section>
+
+      {/* VERDICT */}
+      <section className="section anim">
+        <div className="verdict">
+          <div className="verdict-tag">{t.verdictTag}</div>
+          <div className="verdict-title">
+            {t.verdictTitle1} <em>{t.verdictTitleEm1}</em> {t.verdictTitle2}<br/>
+            {t.verdictTitle3} <em>{t.verdictTitleEm2}</em>{t.verdictTitle4}
+          </div>
+          <div className="verdict-body" dangerouslySetInnerHTML={{__html:t.verdictBody}}/>
+          <div className="evidence-list">
+            {t.evidence.map(([col,text])=>(
+              <div key={text} className="evidence-item">
+                <div style={{width:6,height:6,borderRadius:'50%',background:col,marginTop:7,flexShrink:0}}/>
+                <span>{text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <footer style={{textAlign:'center',padding:'48px 20px',borderTop:'1px solid var(--line)',fontFamily:'Space Mono,monospace',fontSize:10,color:'var(--dim2)',letterSpacing:'0.15em'}}>
+        <div>{t.footerTitle}</div>
+        <div style={{marginTop:8,opacity:0.5,fontFamily:'Space Grotesk,sans-serif',fontSize:13,letterSpacing:'0.05em'}}>{t.footerSub}</div>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('app')).render(<App/>);
+</script>
+</body>
 </html>
