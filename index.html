@@ -60,7 +60,7 @@ nav{
 .hero-title{font-size:clamp(13px,1.4vw,18px);color:var(--dim);font-weight:400;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:48px;}
 .hero-thesis{max-width:640px;font-size:clamp(17px,2vw,26px);font-weight:500;line-height:1.5;color:var(--text);margin-bottom:48px;}
 .hero-thesis em{color:var(--gold);font-style:normal;}
-.hero-findings{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:2px;border:1px solid var(--line);max-width:640px;}
+.hero-findings{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;border:1px solid var(--line);max-width:640px;}
 .finding-cell{padding:16px 18px;background:var(--bg2);border-right:1px solid var(--line);}
 .finding-cell:last-child{border-right:none;}
 .fc-val{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--gold);}
@@ -144,7 +144,7 @@ nav{
 </head>
 <body>
 <nav>
-  <div class="nav-id">HURÛF-U MUKATTAA // AI ANALYSIS</div>
+  <div class="nav-id" id="nav-id-label">HURÛF-U MUKATTAA // AI ANALYSIS</div>
   <div class="nav-center">
     <div class="nav-status"><span class="status-dot"></span><span id="nav-status-label">8 ANALYSES COMPLETE</span></div>
   </div>
@@ -187,12 +187,20 @@ function setLang(l) {
   document.getElementById('btn-tr').className = 'lang-btn' + (l==='tr'?' active':'');
   document.documentElement.lang = l;
   if(window.__setAppLang) window.__setAppLang(l);
-  // update tweaks labels
   const isEN = l === 'en';
+  document.getElementById('nav-id-label').textContent   = isEN ? 'HURÛF-U MUKATTAA // AI ANALYSIS' : 'HURÛF-U MUKATTAA // AI ANALİZİ';
   document.getElementById('nav-status-label').textContent = isEN ? '8 ANALYSES COMPLETE' : '8 ANALİZ TAMAMLANDI';
-  document.getElementById('tw-panel-title').textContent = isEN ? 'Tweaks' : 'Ayarlar';
-  document.getElementById('tw-lbl-accent').textContent = isEN ? 'Accent Color' : 'Vurgu Rengi';
-  document.getElementById('tw-lbl-mode').textContent = isEN ? 'Appearance' : 'Görünüm';
+  document.getElementById('tw-panel-title').textContent  = isEN ? 'Tweaks' : 'Ayarlar';
+  document.getElementById('tw-lbl-accent').textContent   = isEN ? 'Accent Color' : 'Vurgu Rengi';
+  document.getElementById('tw-lbl-mode').textContent     = isEN ? 'Appearance' : 'Görünüm';
+  // translate select options
+  const accentOpts = document.getElementById('tw-accent').options;
+  const accentEN = ['Gold','Teal','Violet','Rose'];
+  const accentTR = ['Altın','Teal','Viyole','Gül'];
+  for(let i=0;i<accentOpts.length;i++) accentOpts[i].text = isEN ? accentEN[i] : accentTR[i];
+  const modeOpts = document.getElementById('tw-mode').options;
+  modeOpts[0].text = isEN ? 'Dark' : 'Koyu';
+  modeOpts[1].text = isEN ? 'Dim'  : 'Loş';
 }
 </script>
 
@@ -208,6 +216,7 @@ const TX = {
     heroThesisQ1: '"what do they mean?"',
     heroThesisB: 'I ask',
     heroThesisQ2: '"what do they do?"',
+    heroThesisSuffix: '',
     heroFindings: [
       {val:'29', label:'Suras with muqatta\'at'},
       {val:'14', label:'Letters used (half of 28)'},
@@ -306,7 +315,7 @@ const TX = {
     verdictTitle2:'anything —',
     verdictTitle3:'they',
     verdictTitleEm2:'organise',
-    verdictTitle4:'something.',
+    verdictTitle4:' something.',
     verdictBody:`Synthesis of 8 analyses: the strongest hypothesis is <strong>structural classification and metadata system.</strong>
       <br/><br/>
       People read these letters <em>horizontally</em>: trying to decode what each combination means. 
@@ -333,6 +342,7 @@ const TX = {
     heroThesisQ1: '"ne anlama geliyor?"',
     heroThesisB: 'diye soruyor. Ben',
     heroThesisQ2: '"ne yapıyor?"',
+    heroThesisSuffix: ' diye soruyorum.',
     heroFindings: [
       {val:'29', label:'Mukattaa sure'},
       {val:'14', label:'Kullanılan harf (28\'in yarısı)'},
@@ -548,7 +558,8 @@ function NetworkGraph({legend}){
   const handleMove=useCallback(e=>{
     const canvas=canvasRef.current;if(!canvas)return;
     const rect=canvas.getBoundingClientRect();
-    const mx=e.clientX-rect.left,my=e.clientY-rect.top;
+    const scaleX=canvas.width/rect.width, scaleY=canvas.height/rect.height;
+    const mx=(e.clientX-rect.left)*scaleX, my=(e.clientY-rect.top)*scaleY;
     const found=nodes.find(n=>Math.hypot(n.x-mx,n.y-my)<n.r+6);
     setHovered(found?found.id:null);
   },[]);
@@ -597,6 +608,12 @@ function SuraMap({t}){
   );
 }
 
+// ── HELPERS ───────────────────────────────────────────────────────────────
+function hlTitle(title, span) {
+  if (!span || !title.includes(span)) return title;
+  return title.replace(span, `<span>${span}</span>`);
+}
+
 // ── APP ───────────────────────────────────────────────────────────────────
 function App(){
   const [lang,setLang]=useState('en');
@@ -639,7 +656,7 @@ function App(){
         <div className="hero-title">{t.heroTitle}</div>
         <div className="hero-thesis">
           {t.heroThesisA} <em>{t.heroThesisQ1}</em><br/>
-          {t.heroThesisB} <em>{t.heroThesisQ2}</em>
+          {t.heroThesisB} <em>{t.heroThesisQ2}</em>{t.heroThesisSuffix}
         </div>
         <div className="hero-findings">
           {t.heroFindings.map(f=>(
@@ -655,7 +672,7 @@ function App(){
       <section className="section anim">
         <div className="sec-header">
           <div className="sec-index">{t.s1index}</div>
-          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:t.s1title.replace(t.s1titleSpan,`<span>${t.s1titleSpan}</span>`)}}/>
+          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:hlTitle(t.s1title,t.s1titleSpan)}}/>
           <p className="sec-body" dangerouslySetInnerHTML={{__html:t.s1body}}/>
         </div>
         <div style={{marginBottom:20,display:'flex',gap:12,alignItems:'center'}}>
@@ -703,7 +720,7 @@ function App(){
       <section className="section anim">
         <div className="sec-header">
           <div className="sec-index">{t.s2index}</div>
-          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:t.s2title.replace(t.s2titleSpan,`<span>${t.s2titleSpan}</span>`)}}/>
+          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:hlTitle(t.s2title,t.s2titleSpan)}}/>
           <p className="sec-body" dangerouslySetInnerHTML={{__html:t.s2body}}/>
         </div>
         <div className="combo-grid">
@@ -736,7 +753,7 @@ function App(){
       <section className="section anim">
         <div className="sec-header">
           <div className="sec-index">{t.s3index}</div>
-          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:t.s3title.replace(t.s3titleSpan,`<span>${t.s3titleSpan}</span>`)}}/>
+          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:hlTitle(t.s3title,t.s3titleSpan)}}/>
           <p className="sec-body" dangerouslySetInnerHTML={{__html:t.s3body}}/>
         </div>
         <SuraMap t={t}/>
@@ -754,7 +771,7 @@ function App(){
       <section className="section anim">
         <div className="sec-header">
           <div className="sec-index">{t.s4index}</div>
-          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:t.s4title.replace(t.s4titleSpan,`<span>${t.s4titleSpan}</span>`)}}/>
+          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:hlTitle(t.s4title,t.s4titleSpan)}}/>
           <p className="sec-body" dangerouslySetInnerHTML={{__html:t.s4body}}/>
         </div>
         <div className="cluster-grid">
@@ -783,7 +800,7 @@ function App(){
       <section className="section anim">
         <div className="sec-header">
           <div className="sec-index">{t.s5index}</div>
-          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:t.s5title.replace(t.s5titleSpan,`<span>${t.s5titleSpan}</span>`)}}/>
+          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:hlTitle(t.s5title,t.s5titleSpan)}}/>
           <p className="sec-body" dangerouslySetInnerHTML={{__html:t.s5body}}/>
         </div>
         <NetworkGraph legend={t.netLegend}/>
@@ -802,7 +819,7 @@ function App(){
       <section className="section anim">
         <div className="sec-header">
           <div className="sec-index">{t.s6index}</div>
-          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:t.s6title.replace(t.s6titleSpan,`<span>${t.s6titleSpan}</span>`)}}/>
+          <h2 className="sec-title" dangerouslySetInnerHTML={{__html:hlTitle(t.s6title,t.s6titleSpan)}}/>
           <p className="sec-body" dangerouslySetInnerHTML={{__html:t.s6body}}/>
         </div>
         <div style={{overflowX:'auto',marginBottom:24}}>
